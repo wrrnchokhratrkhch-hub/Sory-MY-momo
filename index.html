@@ -45,6 +45,11 @@ button{
     color:#d6003b;
 }
 
+.music-btn{
+    background:#ffc0cb;
+    color:#a80038;
+}
+
 .hidden{
     display:none;
 }
@@ -52,7 +57,15 @@ button{
 </head>
 <body>
 
+<!-- 🎵 เพลง -->
+<audio id="bgm" loop>
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
 <div class="card">
+
+<!-- ปุ่มเปิดเพลง -->
+<button class="music-btn" onclick="playMusic()">🎵 กดเปิดเพลง</button>
 
 <div id="page1">
 <h2>ที่รัก...ยกโทษให้เค้าได้ไหม 🥺</h2>
@@ -96,6 +109,10 @@ button{
 </div>
 
 <script>
+function playMusic(){
+    document.getElementById("bgm").play();
+}
+
 function hideAll(){
     document.getElementById("page1").classList.add("hidden");
     document.getElementById("page2").classList.add("hidden");
