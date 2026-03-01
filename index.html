@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ง้อเค้านะ 💖</title>
+
+<style>
+body{
+    margin:0;
+    font-family:sans-serif;
+    background:#ffeef2;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    text-align:center;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    width:90%;
+    max-width:400px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+button{
+    margin:10px;
+    padding:12px 20px;
+    border:none;
+    border-radius:20px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.yes{
+    background:#ff9db3;
+    color:white;
+}
+
+.no{
+    background:#ffd1dc;
+    color:#d6003b;
+}
+
+.hidden{
+    display:none;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+<div id="page1">
+<h2>ที่รัก...ยกโทษให้เค้าได้ไหม 🥺</h2>
+<p>เค้ารู้ว่าครั้งนี้เค้าผิด เค้าขอโอกาสอีกครั้งได้ไหม</p>
+<button class="yes" onclick="forgive()">ยกโทษให้</button>
+<button class="no" onclick="nextPage()">ยังไม่หายงอน</button>
+</div>
+
+<div id="page2" class="hidden">
+<h2>แน่ใจเหรอ...ไม่ให้โอกาสเค้าจริง ๆ เหรอ 😢</h2>
+<p>เค้าสัญญาว่าจะตั้งใจฟัง และไม่ทำให้เธอเสียใจแบบนี้อีก</p>
+<button class="yes" onclick="forgive()">เริ่มใจอ่อนแล้วนะ</button>
+<button class="no" onclick="nextPage2()">ยังไม่หายงอน</button>
+</div>
+
+<div id="page3" class="hidden">
+<h2>เค้าง้อจริงจังนะ 🥹</h2>
+<p>ไม่มีข้อแก้ตัวเลย มีแต่ความรู้สึกผิดกับความรักที่ให้ไปเต็มหัวใจ</p>
+<button class="yes" onclick="forgive()">ยกโทษให้ก็ได้...</button>
+<button class="no" onclick="nextPage3()">ยังงอนอยู่</button>
+</div>
+
+<div id="page4" class="hidden">
+<h2>งั้นเค้ายอมแล้วก็ได้...แต่รักจริงนะ 💛</h2>
+<p>ต่อให้โดนกดไม่หายงอนกี่รอบ เค้าก็ยังอยากง้อคนเดิมอยู่ดี</p>
+<button class="yes" onclick="forgive()">โอเค หายงอนก็ได้</button>
+<button class="no" onclick="nextPage3()">ยังไม่หายงอน</button>
+</div>
+
+<div id="final" class="hidden">
+<h2>ขอบคุณที่ยกโทษให้เค้านะ 🤍</h2>
+<p>
+เค้าอาจไม่ใช่คนที่สมบูรณ์แบบ  
+แต่จะเป็นคนที่รักเธอให้ดีที่สุด  
+จากนี้จะระวังหัวใจของเธอมากขึ้น  
+<br><br>
+รักนะ และอยากจับมือไปด้วยกันต่อ 💖
+</p>
+</div>
+
+</div>
+
+<script>
+function hideAll(){
+    document.getElementById("page1").classList.add("hidden");
+    document.getElementById("page2").classList.add("hidden");
+    document.getElementById("page3").classList.add("hidden");
+    document.getElementById("page4").classList.add("hidden");
+}
+
+function nextPage(){
+    hideAll();
+    document.getElementById("page2").classList.remove("hidden");
+}
+
+function nextPage2(){
+    hideAll();
+    document.getElementById("page3").classList.remove("hidden");
+}
+
+function nextPage3(){
+    hideAll();
+    document.getElementById("page4").classList.remove("hidden");
+}
+
+function forgive(){
+    hideAll();
+    document.getElementById("final").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
