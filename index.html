@@ -24,6 +24,8 @@ body{
     width:90%;
     max-width:400px;
     box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    overflow-y:auto;
+    max-height:90vh;
 }
 
 button{
@@ -45,27 +47,31 @@ button{
     color:#d6003b;
 }
 
-.music-btn{
-    background:#ffc0cb;
-    color:#a80038;
-}
-
 .hidden{
     display:none;
+}
+
+/* รูปแมว */
+.cat-img{
+    width:200px;
+    margin-top:20px;
+}
+
+/* รูปดอกไม้ */
+.flowers{
+    margin-top:20px;
+}
+
+.flowers img{
+    width:90%;
+    margin:10px 0;
+    border-radius:15px;
 }
 </style>
 </head>
 <body>
 
-<!-- 🎵 เพลง -->
-<audio id="bgm" loop>
-    <source src="song.mp3" type="audio/mpeg">
-</audio>
-
 <div class="card">
-
-<!-- ปุ่มเปิดเพลง -->
-<button class="music-btn" onclick="playMusic()">🎵 กดเปิดเพลง</button>
 
 <div id="page1">
 <h2>ที่รัก...ยกโทษให้เค้าได้ไหม 🥺</h2>
@@ -95,6 +101,7 @@ button{
 <button class="no" onclick="nextPage3()">ยังไม่หายงอน</button>
 </div>
 
+<!-- ✅ หน้าหายงอน -->
 <div id="final" class="hidden">
 <h2>ขอบคุณที่ยกโทษให้เค้านะ 🤍</h2>
 <p>
@@ -104,15 +111,22 @@ button{
 <br><br>
 รักนะ อยากเป็นคนที่โมบอกว่ารักที่สุดในโลกและอยากจับมือไปด้วยกันต่อ 💖
 </p>
+
+<!-- แมวถือดอกไม้ -->
+<img src="cat.png" class="cat-img">
+
+<!-- ดอกไม้ 3 รูป -->
+<div class="flowers">
+    <img src="flower1.jpg">
+    <img src="flower2.jpg">
+    <img src="flower3.jpg">
+</div>
+
 </div>
 
 </div>
 
 <script>
-function playMusic(){
-    document.getElementById("bgm").play();
-}
-
 function hideAll(){
     document.getElementById("page1").classList.add("hidden");
     document.getElementById("page2").classList.add("hidden");
