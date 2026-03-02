@@ -1,1 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>กำลังใจของเค้า 🤍</title>
 
+<style>
+body{
+    margin:0;
+    font-family:sans-serif;
+    background:#fff5f8;
+    text-align:center;
+}
+
+.container{
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:25px;
+    padding:25px;
+    margin:20px auto;
+    width:90%;
+    max-width:400px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.08);
+    position:relative;
+}
+
+.green{ background:#e9f7f1; }
+.pink{ background:#ffeaf1; }
+.blue{ background:#eaf2ff; }
+
+button{
+    margin-top:15px;
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    background:#ff9db3;
+    color:white;
+    cursor:pointer;
+}
+
+.message{
+    margin-top:15px;
+    min-height:60px;
+}
+
+.cat{
+    width:120px;
+    margin-top:10px;
+}
+
+.heart{
+    position:fixed;
+    color:#ff5c8a;
+    animation:floatUp 2s linear forwards;
+    font-size:20px;
+}
+
+@keyframes floatUp{
+    0%{opacity:1; transform:translateY(0);}
+    100%{opacity:0; transform:translateY(-150px);}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- หมวดเหนื่อย -->
+<div class="card green">
+<h2>💛 หมวดเหนื่อย</h2>
+<img src="myaowl-cute.gif" class="cat">
+<div class="message" id="msg1"></div>
+<button onclick="randomMsg(1)">สุ่มกำลังใจ</button>
+</div>
+
+<!-- หมวดเรียน -->
+<div class="card blue">
+<h2>📚 หมวดให้กำลังใจเรียน</h2>
+<img src="myaowl-gatobesucon.gif" class="cat">
+<div class="message" id="msg2"></div>
+<button onclick="randomMsg(2)">สุ่มกำลังใจ</button>
+</div>
+
+<!-- หมวดรัก -->
+<div class="card pink">
+<h2>💌 หมวดบอกรักคิดถึง</h2>
+<img src="heart-love.gif" class="cat">
+<div class="message" id="msg3"></div>
+<button onclick="randomMsg(3)">สุ่มข้อความรัก</button>
+</div>
+
+</div>
+
+<script>
+const messages = {
+1:[
+"เหนื่อยได้ แต่อย่าลืมว่ามีเค้าอยู่ข้าง ๆ นะ 🤍",
+"วันนี้เก่งมากแล้ว พักก่อนก็ได้ 💛",
+"โลกอาจหนัก แต่เค้าจะช่วยถืออีกข้างหนึ่ง"
+],
+2:[
+"อ่านไปอีกนิดนะ คนเก่งของเค้า 📚✨",
+"ทุกความพยายามมันไม่สูญเปล่าเลย",
+"อนาคตกำลังรอคนเก่งอย่างเธออยู่"
+],
+3:[
+"คิดถึงนะ แบบมาก ๆ เลย 💖",
+"ต่อให้ไม่พูดทุกวัน ก็รักทุกวันนะ",
+"เธอคือความสบายใจของเค้าเสมอ"
+]
+};
+
+function randomMsg(type){
+const msgBox = document.getElementById("msg"+type);
+const random = messages[type][Math.floor(Math.random()*messages[type].length)];
+msgBox.innerText = random;
+createHeart();
+}
+
+function createHeart(){
+const heart = document.createElement("div");
+heart.className = "heart";
+heart.innerText = "💖";
+heart.style.left = Math.random()*window.innerWidth + "px";
+heart.style.top = (window.innerHeight-50) + "px";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),2000);
+}
+</script>
+
+</body>
+</html>
