@@ -31,6 +31,7 @@ body{
 .green{ background:#e9f7f1; }
 .pink{ background:#ffeaf1; }
 .blue{ background:#eaf2ff; }
+.purple{ background:#f3e8ff; }
 
 button{
     margin-top:15px;
@@ -40,6 +41,14 @@ button{
     background:#ff9db3;
     color:white;
     cursor:pointer;
+}
+
+input{
+    margin-top:10px;
+    padding:8px;
+    border-radius:15px;
+    border:1px solid #ddd;
+    text-align:center;
 }
 
 .message{
@@ -93,6 +102,18 @@ button{
 <button onclick="randomMsg(3)">สุ่มข้อความรัก</button>
 </div>
 
+<!-- หมวดแฟน -->
+<div class="card purple">
+<h2>แฟน🙈🤭</h2>
+<img src="nub-nub-cat.gif" class="cat">
+<div class="message" id="msg4"></div>
+
+<input type="password" id="lovePass" placeholder="ใส่รหัสก่อนนะ 🤫">
+<br>
+<button onclick="checkPassword()">ยืนยันรหัส</button>
+<button onclick="randomMsg(4)" id="loveBtn" style="display:none;">สุ่มข้อความลับ</button>
+</div>
+
 </div>
 
 <script>
@@ -100,17 +121,37 @@ const messages = {
 1:[
 "เหนื่อยได้ แต่อย่าลืมว่ามีเค้าอยู่ข้าง ๆ นะ 🤍",
 "วันนี้เก่งมากแล้ว พักก่อนก็ได้ 💛",
-"โลกอาจหนัก แต่เค้าจะช่วยถืออีกข้างหนึ่ง"
+"คนเก่งอ่านจนเหนื่อยแล้ว เติมขนมมั๊ย",
+"เป็นกำลังใจให้คั้บ แฟนเค้าเก่งที่สุดอยู่แล้ว😊",
+"โมของเค้าเก่งที่สุดในโลกเลยย🌍",
+"มากอดๆเติมพลังนะคั้บ🫂",
+"โลกอาจหนัก แต่เค้าจะช่วยถืออีกข้างหนึ่งนะ"
 ],
 2:[
 "อ่านไปอีกนิดนะ คนเก่งของเค้า 📚✨",
+"ตั้งใจเรียนเดี๋ยวเราจะได้ตั้งใจรักกันเต็มที่ไง💖",
 "ทุกความพยายามมันไม่สูญเปล่าเลย",
-"อนาคตกำลังรอคนเก่งอย่างเธออยู่"
+"ไม่ว่าผลจะเป็นยังไงโมก็พยามเต็มที่แล้วคั้บ",
+"อนาคตกำลังรอคนเก่งอย่างที่รักอยู่นะ"
 ],
 3:[
 "คิดถึงนะ แบบมาก ๆ เลย 💖",
+"รักโมทุกวัน รักเหมือนเดิม รักที่สุด 😋",
+"คิดถึงงๆๆๆ",
+"ไหนที่รักมาเติมจุ๊บๆโหน่ยย😗",
+"จะถามว่ารักกี่ครั้ง คำตอบก็เหมือนเดิมคับ",
+"ธาราน้อยจะชื่ออะไรดี555",
 "ต่อให้ไม่พูดทุกวัน ก็รักทุกวันนะ",
 "เธอคือความสบายใจของเค้าเสมอ"
+],
+4:[
+"วันนี้เหนื่อยมั้ย เดี๋ยวเค้านวดให้…แต่คิดเงินเป็นจุ๊บนะ 😗",
+"คิดถึงแบบอยากดึงมากอดแน่น ๆ เลย 🙈",
+"ถ้าอยู่ใกล้ ๆ ตอนนี้ ไม่รับประกันความปลอดภัยนะ 🤭",
+"ตัวแค่นี้จะมาขโมยใจเค้าอีกแล้วเหรอ",
+"อยากซุกแขนแล้วบอกว่าเป็นของเค้าคนเดียว",
+"คืนนี้ฝันถึงเค้านะ ไม่งั้นงอนจริง ๆ 😳",
+"รู้มั้ยว่าเธอน่ารักจนเค้าอยากฟัดทุกวันเลย"
 ]
 };
 
@@ -119,6 +160,16 @@ const msgBox = document.getElementById("msg"+type);
 const random = messages[type][Math.floor(Math.random()*messages[type].length)];
 msgBox.innerText = random;
 createHeart();
+}
+
+function checkPassword(){
+const input = document.getElementById("lovePass").value;
+if(input === "200169"){
+    document.getElementById("loveBtn").style.display = "inline-block";
+    alert("รหัสถูกต้อง 🙈 เปิดโหมดแฟนแล้ว");
+}else{
+    alert("รหัสไม่ถูกนะงับ 🤫");
+}
 }
 
 function createHeart(){
