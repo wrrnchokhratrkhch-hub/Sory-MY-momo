@@ -7,61 +7,63 @@
 <style>
 
 body{
-font-family: sans-serif;
-background:#f7e4ea;
+font-family:sans-serif;
+background:#f6e7ec;
 text-align:center;
 margin:0;
 }
 
-/* หัวเว็บ */
-.header{
-font-size:40px;
-color:#ff6fa0;
+h1{
+color:#ff6b9a;
 margin-top:20px;
-animation:wave 3s infinite ease-in-out;
-}
-
-@keyframes wave{
-0%{transform:translateY(0)}
-50%{transform:translateY(-8px)}
-100%{transform:translateY(0)}
 }
 
 .container{
+padding:20px;
+}
+
+.albumGrid{
 display:flex;
 flex-wrap:wrap;
-gap:30px;
-padding:40px;
+gap:20px;
 justify-content:center;
+margin-top:30px;
 }
 
 .album{
 width:200px;
-height:250px;
-background:#ffd0dc;
+height:200px;
+background:#ffc0cb;
 border-radius:20px;
 display:flex;
-flex-direction:column;
-justify-content:center;
 align-items:center;
+justify-content:center;
 cursor:pointer;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+font-weight:bold;
 }
 
-.add{
-border:3px dashed #ff8fab;
-background:#fff;
+.addAlbum{
+width:200px;
+height:200px;
+border:3px dashed #ff7b9c;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
 font-size:40px;
-color:#ff8fab;
+cursor:pointer;
 }
 
-.gallery{
-display:none;
-padding:20px;
+.photoGrid{
+display:flex;
+flex-wrap:wrap;
+gap:20px;
+justify-content:center;
+margin-top:20px;
 }
 
 .photo{
-margin:20px;
+width:200px;
 }
 
 .photo img{
@@ -71,22 +73,23 @@ border-radius:15px;
 
 .date{
 font-size:14px;
-color:#666;
+color:#555;
 }
 
 .caption{
 font-size:13px;
-color:#444;
+color:#777;
+margin-bottom:5px;
 }
 
 button{
-padding:8px 14px;
+background:#ff7b9c;
 border:none;
-border-radius:10px;
-background:#ff8fab;
 color:white;
+padding:6px 10px;
+margin:3px;
+border-radius:8px;
 cursor:pointer;
-margin:5px;
 }
 
 </style>
@@ -94,26 +97,33 @@ margin:5px;
 
 <body>
 
-<div class="header">
-บันทึกการเดินทางของธาราและแตงโม 💗
-</div>
+<h1>บันทึกการเดินทางของธาราและแตงโม 💗</h1>
 
-<div id="albums" class="container"></div>
+<div class="container">
 
-<div id="gallery" class="gallery">
+<div id="albums" class="albumGrid"></div>
+
+<div id="albumView" style="display:none">
+
 <h2 id="albumTitle"></h2>
 
-<input type="file" id="upload">
+<input type="file" id="photoInput">
 
-<div id="photos"></div>
+<div id="photos" class="photoGrid"></div>
 
-<button onclick="back()">⬅ กลับ</button>
+<br>
+
+<button onclick="goHome()">← กลับ</button>
 <button onclick="deleteAlbum()">🗑 ลบอัลบั้ม</button>
+
+</div>
+
 </div>
 
 <script>
 
 let albums = JSON.parse(localStorage.getItem("albums")) || [];
+
 let current = null;
 
 function save(){
@@ -122,47 +132,42 @@ localStorage.setItem("albums",JSON.stringify(albums));
 
 function renderAlbums(){
 
-const box=document.getElementById("albums");
+let box=document.getElementById("albums");
 box.innerHTML="";
 
 albums.forEach((a,i)=>{
 
 let div=document.createElement("div");
 div.className="album";
+
 div.onclick=()=>openAlbum(i);
 
-div.innerHTML=`
-<div>${a.cover ? `<img src="${a.cover}" style="width:100%;height:150px;object-fit:cover;border-radius:20px 20px 0 0;">`:""}</div>
-<div>${a.name}</div>
-`;
+div.innerHTML=a.cover ?
+`<img src="${a.cover}" style="width:100%;height:100%;object-fit:cover;border-radius:20px">`
+:
+a.name;
 
 box.appendChild(div);
 
 });
 
 let add=document.createElement("div");
-add.className="album add";
+add.className="addAlbum";
 add.innerHTML="+";
-add.onclick=createAlbum;
 
-box.appendChild(add);
+add.onclick=()=>{
 
-}
+let name=prompt("ชื่ออัลบั้ม");
 
-function createAlbum(){
-
-let name=prompt("ตั้งชื่ออัลบั้ม");
-
-if(!name)return;
-
-albums.push({
-name:name,
-photos:[],
-cover:null
-});
-
+if(name){
+albums.push({name,photos:[],cover:null});
 save();
 renderAlbums();
+}
+
+};
+
+box.appendChild(add);
 
 }
 
@@ -171,7 +176,7 @@ function openAlbum(i){
 current=i;
 
 document.getElementById("albums").style.display="none";
-document.getElementById("gallery").style.display="block";
+document.getElementById("albumView").style.display="block";
 
 document.getElementById("albumTitle").innerText=albums[i].name;
 
@@ -179,48 +184,25 @@ renderPhotos();
 
 }
 
-function back(){
+function goHome(){
 
-document.getElementById("gallery").style.display="none";
 document.getElementById("albums").style.display="flex";
+document.getElementById("albumView").style.display="none";
 
 renderAlbums();
 
 }
 
-function renderPhotos(){
+document.getElementById("photoInput").onchange=e=>{
 
-const box=document.getElementById("photos");
-box.innerHTML="";
-
-albums[current].photos.forEach((p,i)=>{
-
-let div=document.createElement("div");
-div.className="photo";
-
-div.innerHTML=`
-<img src="${p.img}">
-<div class="date">📅 ${p.date}</div>
-<div class="caption">✏️ ${p.caption}</div>
-<button onclick="setCover(${i})">ตั้งเป็นหน้าปก</button>
-`;
-
-box.appendChild(div);
-
-});
-
-}
-
-document.getElementById("upload").onchange=function(){
-
-let file=this.files[0];
+let file=e.target.files[0];
 
 let reader=new FileReader();
 
 reader.onload=function(){
 
-let date=prompt("ใส่วันที่ของความทรงจำ");
-let caption=prompt("คำบรรยายรูป");
+let date=prompt("วันที่ของความทรงจำ");
+let caption=prompt("คำบรรยาย");
 
 albums[current].photos.push({
 img:reader.result,
@@ -237,26 +219,86 @@ reader.readAsDataURL(file);
 
 };
 
+function renderPhotos(){
+
+let box=document.getElementById("photos");
+box.innerHTML="";
+
+albums[current].photos.forEach((p,i)=>{
+
+let div=document.createElement("div");
+div.className="photo";
+
+div.innerHTML=`
+
+<img src="${p.img}">
+
+<div class="date">📅 ${p.date || "-"}</div>
+
+<div class="caption">✏️ ${p.caption || "-"}</div>
+
+<button onclick="editPhoto(${i})">✏️ แก้ไข</button>
+
+<button onclick="deletePhoto(${i})">🗑 ลบรูป</button>
+
+<button onclick="setCover(${i})">💗 ตั้งเป็นหน้าปก</button>
+
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+function editPhoto(i){
+
+let p=albums[current].photos[i];
+
+let d=prompt("แก้ไขวันที่",p.date);
+let c=prompt("แก้ไขคำบรรยาย",p.caption);
+
+if(d!==null)p.date=d;
+if(c!==null)p.caption=c;
+
+save();
+renderPhotos();
+
+}
+
+function deletePhoto(i){
+
+if(confirm("ลบรูปนี้?")){
+
+albums[current].photos.splice(i,1);
+
+save();
+renderPhotos();
+
+}
+
+}
+
 function setCover(i){
 
 albums[current].cover=albums[current].photos[i].img;
 
 save();
-alert("ตั้งหน้าปกแล้ว");
+renderAlbums();
 
 }
 
 function deleteAlbum(){
 
-let code=prompt("ใส่รหัสเพื่อลบอัลบั้ม");
+let pass=prompt("ใส่รหัสเพื่อลบอัลบั้ม");
 
-if(code==="200169"){
+if(pass==="200169"){
 
 albums.splice(current,1);
 
 save();
 
-back();
+goHome();
 
 }else{
 
