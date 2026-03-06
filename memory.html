@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Our Memory Train 💗</title>
+<title>Memory of Us</title>
 
 <style>
 
@@ -16,26 +16,47 @@ overflow-x:auto;
 overflow-y:hidden;
 }
 
+/* หัวข้อเว็บ */
+
+.header{
+position:fixed;
+top:10px;
+width:100%;
+text-align:center;
+font-size:36px;
+font-weight:bold;
+color:#ff6fa5;
+animation:wave 3s infinite ease-in-out;
+}
+
+@keyframes wave{
+0%{transform:translateY(0)}
+50%{transform:translateY(-8px)}
+100%{transform:translateY(0)}
+}
+
+/* timeline */
+
 .timeline{
 display:flex;
 gap:40px;
-padding:60px;
+padding:120px 60px;
 height:100vh;
 align-items:center;
 }
 
 .album{
 min-width:260px;
-height:300px;
+height:340px;
 border-radius:25px;
 box-shadow:0 10px 25px rgba(0,0,0,0.15);
 display:flex;
 flex-direction:column;
-justify-content:center;
 align-items:center;
+justify-content:flex-start;
 cursor:pointer;
+padding:10px;
 position:relative;
-transition:0.2s;
 }
 
 .album:hover{
@@ -43,25 +64,40 @@ transform:scale(1.05);
 }
 
 .album img{
-width:120px;
-height:120px;
+width:140px;
+height:140px;
 object-fit:cover;
 border-radius:15px;
+margin-top:10px;
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+margin-top:5px;
+}
+
+.date{
+font-size:13px;
+color:#666;
+margin-top:5px;
 }
 
 .caption{
-margin-top:10px;
-font-size:14px;
+font-size:12px;
 color:#555;
+padding:5px;
 text-align:center;
-padding:0 10px;
 }
 
 .add{
 background:white;
 font-size:60px;
 color:#ff7aa8;
+justify-content:center;
 }
+
+/* modal */
 
 .modal{
 position:fixed;
@@ -77,7 +113,7 @@ justify-content:center;
 
 .modalContent{
 background:white;
-padding:30px;
+padding:25px;
 border-radius:20px;
 text-align:center;
 width:300px;
@@ -87,21 +123,51 @@ width:300px;
 .modalContent textarea,
 .modalContent select{
 width:90%;
-margin:10px 0;
+margin:8px;
 padding:8px;
 border-radius:10px;
 border:1px solid #ddd;
 }
 
+/* gallery */
+
+.gallery{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:white;
+display:none;
+overflow:auto;
+padding:40px;
+}
+
+.gallery img{
+width:200px;
+border-radius:15px;
+margin:10px;
+}
+
+.close{
+position:fixed;
+top:10px;
+right:20px;
+font-size:30px;
+cursor:pointer;
+}
+
+/* hearts */
+
 .heart{
 position:fixed;
-font-size:22px;
+font-size:24px;
 animation:pop 1s forwards;
 }
 
 @keyframes pop{
-0%{transform:scale(0);opacity:1;}
-100%{transform:scale(1.8);opacity:0;}
+0%{transform:scale(0);opacity:1}
+100%{transform:scale(2);opacity:0}
 }
 
 </style>
@@ -109,23 +175,27 @@ animation:pop 1s forwards;
 
 <body>
 
-<div class="timeline" id="timeline">
-
-<div class="album add" onclick="openModal()">
-+
+<div class="header">
+บันทึกการเดินทางของธาราและแตงโม 💗
 </div>
 
-</div>
+<div class="timeline" id="timeline"></div>
 
+
+<!-- modal สร้างอัลบั้ม -->
 
 <div class="modal" id="modal">
 <div class="modalContent">
 
-<h3>เพิ่มความทรงจำ 💗</h3>
+<h3>เพิ่มอัลบั้ม</h3>
 
-<input type="file" id="imgInput">
+<input id="title" placeholder="ชื่ออัลบั้ม">
 
-<textarea id="caption" placeholder="เขียนความทรงจำ..."></textarea>
+<input type="date" id="date">
+
+<input type="file" id="imgs" multiple>
+
+<textarea id="caption" placeholder="คำอธิบาย"></textarea>
 
 <select id="color">
 <option value="#ffd6e7">ชมพู</option>
@@ -137,16 +207,30 @@ animation:pop 1s forwards;
 
 <br>
 
-<button onclick="createAlbum()">สร้างอัลบั้ม</button>
-
+<button onclick="createAlbum()">สร้าง</button>
 <button onclick="closeModal()">ยกเลิก</button>
 
 </div>
 </div>
 
+
+<!-- gallery -->
+
+<div class="gallery" id="gallery">
+
+<div class="close" onclick="closeGallery()">✖</div>
+
+<div id="galleryImgs"></div>
+
+<button onclick="deleteAlbum()">🗑 ลบอัลบั้ม</button>
+
+</div>
+
+
 <script>
 
 let albums = JSON.parse(localStorage.getItem("albums")||"[]")
+let currentAlbum = null
 
 function save(){
 localStorage.setItem("albums",JSON.stringify(albums))
@@ -155,27 +239,28 @@ localStorage.setItem("albums",JSON.stringify(albums))
 function render(){
 
 const timeline = document.getElementById("timeline")
-
-timeline.innerHTML = ""
+timeline.innerHTML=""
 
 albums.forEach((a,i)=>{
 
-const div = document.createElement("div")
+const div=document.createElement("div")
 div.className="album"
 div.style.background=a.color
 
 div.innerHTML=`
-<img src="${a.img}">
+<div class="title">${a.title}</div>
+<img src="${a.images[0]}">
+<div class="date">${a.date}</div>
 <div class="caption">${a.caption}</div>
 `
 
-div.onclick = ()=> hearts()
+div.onclick=()=>openGallery(i)
 
 timeline.appendChild(div)
 
 })
 
-const add = document.createElement("div")
+const add=document.createElement("div")
 add.className="album add"
 add.innerHTML="+"
 add.onclick=openModal
@@ -194,18 +279,32 @@ document.getElementById("modal").style.display="none"
 
 function createAlbum(){
 
-const file = document.getElementById("imgInput").files[0]
+const files=document.getElementById("imgs").files
 
-if(!file) return
+if(files.length==0)return
 
-const reader = new FileReader()
+let images=[]
+
+let loaded=0
+
+for(let f of files){
+
+const reader=new FileReader()
 
 reader.onload=function(e){
 
+images.push(e.target.result)
+
+loaded++
+
+if(loaded===files.length){
+
 albums.push({
-img:e.target.result,
+title:document.getElementById("title").value,
+date:document.getElementById("date").value,
 caption:document.getElementById("caption").value,
-color:document.getElementById("color").value
+color:document.getElementById("color").value,
+images:images
 })
 
 save()
@@ -214,15 +313,65 @@ closeModal()
 
 }
 
-reader.readAsDataURL(file)
+}
+
+reader.readAsDataURL(f)
+
+}
+
+}
+
+function openGallery(i){
+
+currentAlbum=i
+
+const g=document.getElementById("gallery")
+const box=document.getElementById("galleryImgs")
+
+box.innerHTML=""
+
+albums[i].images.forEach(img=>{
+
+const el=document.createElement("img")
+el.src=img
+box.appendChild(el)
+
+})
+
+g.style.display="block"
+
+hearts()
+
+}
+
+function closeGallery(){
+document.getElementById("gallery").style.display="none"
+}
+
+function deleteAlbum(){
+
+let pass=prompt("ใส่รหัสก่อนลบ")
+
+if(pass==="200169"){
+
+albums.splice(currentAlbum,1)
+save()
+render()
+closeGallery()
+
+}else{
+
+alert("รหัสไม่ถูก")
+
+}
 
 }
 
 function hearts(){
 
-for(let i=0;i<10;i++){
+for(let i=0;i<15;i++){
 
-const h = document.createElement("div")
+const h=document.createElement("div")
 
 h.className="heart"
 h.innerText=Math.random()>0.5?"💖":"💗"
