@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Our Memory Train 💗</title>
+
+<style>
+
+body{
+margin:0;
+font-family:sans-serif;
+background:#fff0f5;
+overflow-x:auto;
+overflow-y:hidden;
+}
+
+.timeline{
+display:flex;
+gap:40px;
+padding:60px;
+height:100vh;
+align-items:center;
+}
+
+.album{
+min-width:260px;
+height:300px;
+border-radius:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+cursor:pointer;
+position:relative;
+transition:0.2s;
+}
+
+.album:hover{
+transform:scale(1.05);
+}
+
+.album img{
+width:120px;
+height:120px;
+object-fit:cover;
+border-radius:15px;
+}
+
+.caption{
+margin-top:10px;
+font-size:14px;
+color:#555;
+text-align:center;
+padding:0 10px;
+}
+
+.add{
+background:white;
+font-size:60px;
+color:#ff7aa8;
+}
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.modalContent{
+background:white;
+padding:30px;
+border-radius:20px;
+text-align:center;
+width:300px;
+}
+
+.modalContent input,
+.modalContent textarea,
+.modalContent select{
+width:90%;
+margin:10px 0;
+padding:8px;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+.heart{
+position:fixed;
+font-size:22px;
+animation:pop 1s forwards;
+}
+
+@keyframes pop{
+0%{transform:scale(0);opacity:1;}
+100%{transform:scale(1.8);opacity:0;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="timeline" id="timeline">
+
+<div class="album add" onclick="openModal()">
++
+</div>
+
+</div>
+
+
+<div class="modal" id="modal">
+<div class="modalContent">
+
+<h3>เพิ่มความทรงจำ 💗</h3>
+
+<input type="file" id="imgInput">
+
+<textarea id="caption" placeholder="เขียนความทรงจำ..."></textarea>
+
+<select id="color">
+<option value="#ffd6e7">ชมพู</option>
+<option value="#d6ecff">ฟ้า</option>
+<option value="#e8ffd6">เขียว</option>
+<option value="#fff3c4">เหลือง</option>
+<option value="#f1d6ff">ม่วง</option>
+</select>
+
+<br>
+
+<button onclick="createAlbum()">สร้างอัลบั้ม</button>
+
+<button onclick="closeModal()">ยกเลิก</button>
+
+</div>
+</div>
+
+<script>
+
+let albums = JSON.parse(localStorage.getItem("albums")||"[]")
+
+function save(){
+localStorage.setItem("albums",JSON.stringify(albums))
+}
+
+function render(){
+
+const timeline = document.getElementById("timeline")
+
+timeline.innerHTML = ""
+
+albums.forEach((a,i)=>{
+
+const div = document.createElement("div")
+div.className="album"
+div.style.background=a.color
+
+div.innerHTML=`
+<img src="${a.img}">
+<div class="caption">${a.caption}</div>
+`
+
+div.onclick = ()=> hearts()
+
+timeline.appendChild(div)
+
+})
+
+const add = document.createElement("div")
+add.className="album add"
+add.innerHTML="+"
+add.onclick=openModal
+
+timeline.appendChild(add)
+
+}
+
+function openModal(){
+document.getElementById("modal").style.display="flex"
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none"
+}
+
+function createAlbum(){
+
+const file = document.getElementById("imgInput").files[0]
+
+if(!file) return
+
+const reader = new FileReader()
+
+reader.onload=function(e){
+
+albums.push({
+img:e.target.result,
+caption:document.getElementById("caption").value,
+color:document.getElementById("color").value
+})
+
+save()
+render()
+closeModal()
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+function hearts(){
+
+for(let i=0;i<10;i++){
+
+const h = document.createElement("div")
+
+h.className="heart"
+h.innerText=Math.random()>0.5?"💖":"💗"
+
+h.style.left=Math.random()*window.innerWidth+"px"
+h.style.top=Math.random()*window.innerHeight+"px"
+
+document.body.appendChild(h)
+
+setTimeout(()=>h.remove(),1000)
+
+}
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
