@@ -2,145 +2,91 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>บันทึกการเดินทางของธาราและแตงโม</title>
 
 <style>
 
 body{
+font-family: sans-serif;
+background:#f7e4ea;
+text-align:center;
 margin:0;
-font-family:sans-serif;
-background:#fff0f5;
-overflow-x:auto;
-overflow-y:auto;
 }
 
-/* หัวข้อเว็บ */
-
+/* หัวเว็บ */
 .header{
-text-align:center;
-font-size:36px;
-font-weight:bold;
-color:#ff6fa5;
-margin-top:30px;
-animation:wave 3s ease-in-out infinite;
+font-size:40px;
+color:#ff6fa0;
+margin-top:20px;
+animation:wave 3s infinite ease-in-out;
 }
 
 @keyframes wave{
 0%{transform:translateY(0)}
-50%{transform:translateY(-6px)}
+50%{transform:translateY(-8px)}
 100%{transform:translateY(0)}
 }
 
-/* timeline */
-
-.timeline{
+.container{
 display:flex;
-gap:40px;
-padding:160px 60px;
-min-height:100vh;
-align-items:center;
+flex-wrap:wrap;
+gap:30px;
+padding:40px;
+justify-content:center;
 }
 
-/* การ์ดอัลบั้ม */
-
 .album{
-min-width:220px;
-height:240px;
-border-radius:25px;
+width:200px;
+height:250px;
+background:#ffd0dc;
+border-radius:20px;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-font-size:20px;
-font-weight:bold;
-color:#444;
-box-shadow:0 10px 20px rgba(0,0,0,0.1);
 cursor:pointer;
-transition:0.25s;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
-
-.album:hover{
-transform:scale(1.05);
-}
-
-/* ปุ่มเพิ่ม */
 
 .add{
-background:white;
-border:3px dashed #ff9db3;
-font-size:50px;
-color:#ff9db3;
+border:3px dashed #ff8fab;
+background:#fff;
+font-size:40px;
+color:#ff8fab;
 }
-
-/* modal */
-
-.modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.4);
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-.modalContent{
-background:white;
-padding:25px;
-border-radius:20px;
-width:320px;
-text-align:center;
-}
-
-.modalContent input,
-.modalContent textarea,
-.modalContent select{
-width:90%;
-margin:8px 0;
-padding:8px;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-button{
-padding:8px 18px;
-border:none;
-border-radius:20px;
-background:#ff9db3;
-color:white;
-cursor:pointer;
-}
-
-/* gallery */
 
 .gallery{
 display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:white;
-overflow:auto;
-padding:30px;
+padding:20px;
 }
 
-.gallery img{
+.photo{
+margin:20px;
+}
+
+.photo img{
 width:200px;
 border-radius:15px;
-margin:10px;
 }
 
-.closeBtn{
-position:fixed;
-top:20px;
-right:30px;
-font-size:28px;
+.date{
+font-size:14px;
+color:#666;
+}
+
+.caption{
+font-size:13px;
+color:#444;
+}
+
+button{
+padding:8px 14px;
+border:none;
+border-radius:10px;
+background:#ff8fab;
+color:white;
 cursor:pointer;
+margin:5px;
 }
 
 </style>
@@ -152,163 +98,175 @@ cursor:pointer;
 บันทึกการเดินทางของธาราและแตงโม 💗
 </div>
 
-<div class="timeline" id="timeline">
+<div id="albums" class="container"></div>
 
-<div class="album add" onclick="openModal()">+</div>
+<div id="gallery" class="gallery">
+<h2 id="albumTitle"></h2>
 
-</div>
+<input type="file" id="upload">
 
-<!-- modal เพิ่มอัลบั้ม -->
+<div id="photos"></div>
 
-<div class="modal" id="modal">
-
-<div class="modalContent">
-
-<h3>สร้างอัลบั้มใหม่</h3>
-
-<input id="albumName" placeholder="ชื่ออัลบั้ม">
-
-<select id="albumColor">
-<option value="#ffd6e7">ชมพู</option>
-<option value="#e6d8ff">ม่วง</option>
-<option value="#d6f3ff">ฟ้า</option>
-<option value="#ffe9c9">พีช</option>
-</select>
-
-<button onclick="createAlbum()">สร้าง</button>
-
-</div>
-
-</div>
-
-<!-- gallery -->
-
-<div class="gallery" id="gallery">
-
-<div class="closeBtn" onclick="closeGallery()">✕</div>
-
-<h2 id="galleryTitle"></h2>
-
-<input type="file" multiple onchange="addPhotos(event)">
-
-<div id="photoContainer"></div>
-
+<button onclick="back()">⬅ กลับ</button>
+<button onclick="deleteAlbum()">🗑 ลบอัลบั้ม</button>
 </div>
 
 <script>
 
-let albums = {}
+let albums = JSON.parse(localStorage.getItem("albums")) || [];
+let current = null;
 
-function openModal(){
-document.getElementById("modal").style.display="flex"
+function save(){
+localStorage.setItem("albums",JSON.stringify(albums));
+}
+
+function renderAlbums(){
+
+const box=document.getElementById("albums");
+box.innerHTML="";
+
+albums.forEach((a,i)=>{
+
+let div=document.createElement("div");
+div.className="album";
+div.onclick=()=>openAlbum(i);
+
+div.innerHTML=`
+<div>${a.cover ? `<img src="${a.cover}" style="width:100%;height:150px;object-fit:cover;border-radius:20px 20px 0 0;">`:""}</div>
+<div>${a.name}</div>
+`;
+
+box.appendChild(div);
+
+});
+
+let add=document.createElement("div");
+add.className="album add";
+add.innerHTML="+";
+add.onclick=createAlbum;
+
+box.appendChild(add);
+
 }
 
 function createAlbum(){
 
-let name=document.getElementById("albumName").value
-let color=document.getElementById("albumColor").value
+let name=prompt("ตั้งชื่ออัลบั้ม");
 
-if(!name)return
+if(!name)return;
 
-let album=document.createElement("div")
+albums.push({
+name:name,
+photos:[],
+cover:null
+});
 
-album.className="album"
-album.style.background=color
-album.innerText=name
-
-album.onclick=()=>openGallery(name)
-
-document.getElementById("timeline").insertBefore(
-album,
-document.querySelector(".add")
-)
-
-albums[name]=[]
-
-document.getElementById("modal").style.display="none"
-document.getElementById("albumName").value=""
+save();
+renderAlbums();
 
 }
 
-function openGallery(name){
+function openAlbum(i){
 
-document.getElementById("gallery").style.display="block"
-document.getElementById("galleryTitle").innerText=name
+current=i;
 
-window.currentAlbum=name
+document.getElementById("albums").style.display="none";
+document.getElementById("gallery").style.display="block";
 
-renderPhotos()
+document.getElementById("albumTitle").innerText=albums[i].name;
 
-explodeHearts()
-
-}
-
-function closeGallery(){
-document.getElementById("gallery").style.display="none"
-}
-
-function addPhotos(e){
-
-let files=e.target.files
-
-for(let file of files){
-
-let url=URL.createObjectURL(file)
-
-albums[currentAlbum].push(url)
+renderPhotos();
 
 }
 
-renderPhotos()
+function back(){
+
+document.getElementById("gallery").style.display="none";
+document.getElementById("albums").style.display="flex";
+
+renderAlbums();
 
 }
 
 function renderPhotos(){
 
-let container=document.getElementById("photoContainer")
-container.innerHTML=""
+const box=document.getElementById("photos");
+box.innerHTML="";
 
-albums[currentAlbum].forEach(src=>{
+albums[current].photos.forEach((p,i)=>{
 
-let img=document.createElement("img")
-img.src=src
+let div=document.createElement("div");
+div.className="photo";
 
-container.appendChild(img)
+div.innerHTML=`
+<img src="${p.img}">
+<div class="date">📅 ${p.date}</div>
+<div class="caption">✏️ ${p.caption}</div>
+<button onclick="setCover(${i})">ตั้งเป็นหน้าปก</button>
+`;
 
-})
+box.appendChild(div);
 
-}
-
-/* เอฟเฟกต์หัวใจ */
-
-function explodeHearts(){
-
-for(let i=0;i<20;i++){
-
-let heart=document.createElement("div")
-
-heart.innerText=Math.random()>0.5?"💖":"💗"
-
-heart.style.position="fixed"
-heart.style.left=window.innerWidth/2+"px"
-heart.style.top=window.innerHeight/2+"px"
-heart.style.fontSize="24px"
-
-let x=(Math.random()-0.5)*600
-let y=(Math.random()-0.5)*400
-
-heart.animate([
-{transform:"translate(0,0)",opacity:1},
-{transform:`translate(${x}px,${y}px)`,opacity:0}
-],{duration:1000})
-
-document.body.appendChild(heart)
-
-setTimeout(()=>heart.remove(),1000)
+});
 
 }
 
+document.getElementById("upload").onchange=function(){
+
+let file=this.files[0];
+
+let reader=new FileReader();
+
+reader.onload=function(){
+
+let date=prompt("ใส่วันที่ของความทรงจำ");
+let caption=prompt("คำบรรยายรูป");
+
+albums[current].photos.push({
+img:reader.result,
+date:date,
+caption:caption
+});
+
+save();
+renderPhotos();
+
+};
+
+reader.readAsDataURL(file);
+
+};
+
+function setCover(i){
+
+albums[current].cover=albums[current].photos[i].img;
+
+save();
+alert("ตั้งหน้าปกแล้ว");
+
 }
+
+function deleteAlbum(){
+
+let code=prompt("ใส่รหัสเพื่อลบอัลบั้ม");
+
+if(code==="200169"){
+
+albums.splice(current,1);
+
+save();
+
+back();
+
+}else{
+
+alert("รหัสไม่ถูกต้อง");
+
+}
+
+}
+
+renderAlbums();
 
 </script>
 
